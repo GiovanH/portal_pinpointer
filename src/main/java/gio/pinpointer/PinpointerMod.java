@@ -13,7 +13,7 @@ public class PinpointerMod
 {
     public static final String MODID = "pinpointer";
     public static final String NAME = "Portal Pinpointer Mod";
-    public static final String VERSION = "1.12.2_v1";
+    public static final String VERSION = "1.12.2_v2";
 
     private static Logger logger;
 

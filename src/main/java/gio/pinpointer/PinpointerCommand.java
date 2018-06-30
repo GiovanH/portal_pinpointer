@@ -34,26 +34,27 @@ public class PinpointerCommand implements ICommand {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		World world = sender.getEntityWorld();
-		BlockPos position = sender.getPosition();
 		int dimension = sender.getCommandSenderEntity().dimension;
-		if (world.isRemote) {
+		if (world.isRemote) { //We should only worry about client side
 			BlockPos overworldCoordinates, netherCoordinates;
 			if (dimension == OVERWORLD_DIMENSION_ID) {
-				overworldCoordinates = position;
+				overworldCoordinates = parseCommandInput(sender, args);
+				if (overworldCoordinates == null) return;
 				netherCoordinates = new BlockPos(
 					overworldCoordinates.getX()/8,
 					overworldCoordinates.getY()/8,
 					overworldCoordinates.getZ()/8
 				);
 			} else if (dimension == NETHER_DIMENSION_ID) {
-				netherCoordinates = position;
+				netherCoordinates = parseCommandInput(sender, args);
+				if (netherCoordinates == null) return;
 				overworldCoordinates = new BlockPos(
 					netherCoordinates.getX()*8 + 4,
 					netherCoordinates.getY(), //although this doesn't matter
 					netherCoordinates.getZ()*8 + 4
 				);
 			} else {
-				sender.sendMessage(new TextComponentString("Dimension ID " + dimension + "Coordinates: " + stringifyVector(position)));
+				sender.sendMessage(new TextComponentString("Dimension ID " + dimension + "Coordinates: " + stringifyVector(sender.getPosition())));
 				return;
 			}
 			StringBuilder n = new StringBuilder();
@@ -65,6 +66,37 @@ public class PinpointerCommand implements ICommand {
 		} else {
 			System.out.println("Not processing client command on Server side");
 		}		
+	}
+	
+	private BlockPos parseCommandInput(ICommandSender sender, String[] args) {
+		BlockPos position = sender.getPosition();
+		BlockPos coords;
+		switch (args.length) {
+			case 0: // Usage: /portal
+				coords = position;
+				break;
+			case 1: //  Usage: /portal help
+				sender.sendMessage(new TextComponentString(getUsage(sender)));
+				return null;
+			case 2: //  Usage: /portal X Z
+				coords = new BlockPos(
+					Integer.parseInt(args[0]),
+					0,
+					Integer.parseInt(args[1])
+				);
+				break;
+			case 3: //  Usage: /portal X Y Z
+				coords = new BlockPos(
+					Integer.parseInt(args[0]),
+					0,
+					Integer.parseInt(args[2])
+				);
+				break;
+			default:
+				System.err.println("Unknown arg length " + args.length);
+				return null;
+		}
+		return coords;
 	}
 
 	private String stringifyVector(BlockPos position) {
@@ -84,7 +116,18 @@ public class PinpointerCommand implements ICommand {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "/" + CMDNAME;
+		StringBuilder n = new StringBuilder();
+		n.append("Pinpointer");
+		n.append("\nAliases: ");
+		for (String alias : aliases) {
+			n.append(alias + ", ");
+		}
+		n.append("\nUsage:");
+		n.append("\n/" + aliases.get(0) + "");
+		n.append("\n/" + aliases.get(0) + " help");
+		n.append("\n/" + aliases.get(0) + " [X] [Z]");
+		n.append("\n/" + aliases.get(0) + " [X] [Y] [Z]");
+		return n.toString();
 	}
 
 	@Override
