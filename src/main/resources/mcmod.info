@@ -1,0 +1,16 @@
+[
+{
+  "modid": "pinpointer",
+  "name": "Portal Pinpointer Mod",
+  "description": "Use /pinpoint or /portal to see the proper location of nether portals.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["GiovanH"],
+  "credits": "GiovanH, the forge dev team",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

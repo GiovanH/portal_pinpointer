@@ -1,3 +1,8 @@
+#MDK
+mdktxt
+gradlew.bat
+gradlew
+
 # eclipse
 bin
 *.launch
@@ -14,8 +19,11 @@ out
 .idea
 
 # gradle
-build
 .gradle
+build
+build.gradle
+gradle*
+
 
 # other
 eclipse
